@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Microsoft.ApplicationInsights.DependencyCollector;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using StackExchange.Redis;
@@ -48,6 +49,11 @@ namespace APIAcoes
             });
 
             services.AddApplicationInsightsTelemetry(Configuration);
+            services.ConfigureTelemetryModule<DependencyTrackingTelemetryModule>(
+                (module, o) =>
+                {
+                    module.EnableSqlCommandTextInstrumentation = true;
+                });
 
             services.AddAzureAppConfiguration();
 
@@ -74,7 +80,7 @@ namespace APIAcoes
                                           
             app.UseSwagger();
             app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ações - Testes - Apache Kafka");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ações - Testes - Azure Queue Storage");
                 c.RoutePrefix = string.Empty;
             });
 
